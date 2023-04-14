@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="StoryChallengeImplementations\**" />
+    <EmbeddedResource Remove="StoryChallengeImplementations\**" />
+    <None Remove="StoryChallengeImplementations\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Selenium.Support" Version="4.8.1" />
+    <PackageReference Include="Selenium.WebDriver" Version="4.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Settings.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+﻿// As usual // means the line is commented out. 
+// If you change this file rebuild with a code change to ensure it's copied to the build folder.
+// username=notauser@gmail.com
+// password=notapassword1
+// practice=false
+// chromedriver=C:\Program Files(x86)\chromedriver_win32\
+// baselanguage=english
