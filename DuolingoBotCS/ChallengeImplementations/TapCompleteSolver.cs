@@ -75,30 +75,43 @@
                 {
                     results.Add(currentMismatches);
                 }
-                else if (currentMismatches.Contains(' '))
+                else
                 {
-                    string[] splitWords = currentMismatches.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string splitWord in splitWords)
-                    {
-                        if (choiceTexts.Contains(splitWord))
-                            results.Add(splitWord);
-                        else
-                            throw new Exception($"Unable to find solution string {currentMismatches} in choices");
-                    }
-                }
-                else if (currentMismatches.Contains('-'))
-                {
-                    string[] splitWords = currentMismatches.Split('-', StringSplitOptions.RemoveEmptyEntries);
-                    foreach (string splitWord in splitWords)
-                    {
-                        if (choiceTexts.Contains(splitWord))
-                            results.Add(splitWord);
-                        else
-                            throw new Exception($"Unable to find solution string {currentMismatches} in choices");
-                    }
+                    bool done = TryAddMismatchesSplitByCharacter(' ');
+                    if (!done) done = TryAddMismatchesSplitByCharacter('-') ;
+                    if (!done) done = TryAddMismatchesSplitByCharacter(' ', '-');
+                    if (!done) throw new Exception($"Unable to find solution string {currentMismatches} in choices");
                 }
                 currentMismatches = "";
             }
+        }
+
+        private bool TryAddMismatchesSplitByCharacter(char character1, char character2)
+        {
+            if (!(currentMismatches.Contains(character1) && currentMismatches.Contains(character2))) return false;
+            return TryAddMismatchesSplitByCharacter(new char[] { character1, character2 });
+        }
+
+        private bool TryAddMismatchesSplitByCharacter(char character)
+        {
+            if (!currentMismatches.Contains(character)) return false;
+            return TryAddMismatchesSplitByCharacter(new char[] { character });
+        }
+
+        private bool TryAddMismatchesSplitByCharacter(char[] characters)
+        {
+            string[] splitWords = currentMismatches.Split(characters, StringSplitOptions.RemoveEmptyEntries);
+            bool allWordsFound = true;
+            foreach (string splitWord in splitWords)
+            {
+                if (!choiceTexts.Contains(splitWord))
+                {
+                    allWordsFound = false;
+                    break;
+                }
+            }
+            if (allWordsFound) results.AddRange(splitWords);
+            return allWordsFound;
         }
 
         private void IncrementQuestionWordsPosition(int increment = 1)
@@ -118,7 +131,6 @@
         private bool QuestionWordMatchesStartOrEndOfSolutionWord(string questionWord, string solutionWord) =>
             !finishedQuestionWords && (solutionWord.StartsWith(questionWord) || solutionWord.EndsWith(questionWord));
 
-        // TODO try... methods should really return a bool and an out parameter
         private void TryFindResultWithPartialWordMatch(string questionWord, string solutionWord)
         {
             // Get the part of the solutionWord that is not questionWord (it either starts or ends with questionWord)
