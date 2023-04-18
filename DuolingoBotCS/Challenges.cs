@@ -19,37 +19,15 @@ namespace DuolingoBotCS
             bool challengesCompleted = false;
             while (!challengesCompleted)
             {
-                ReadOnlyCollection<IWebElement> elements = driver.FindElements(By.XPath(
-                    "//div [starts-with (@data-test, 'challenge challenge-')]"));
-                if (elements.Count > 0) RunChallenge(elements);
+                RunChallenge();
 
                 //Program.DebugDumpButtonState("Debug Dump: In Run before wait");
                 WaitForNewScreenThenContinue();
                 //Program.DebugDumpButtonState("Debug Dump: In Run after wait");
 
-                // Test for message windows after a challenge
-
-                // Duo have overlaid some message buttons on a valid displayed (and not disabled) player-next button
-                // So a naive test for a next button may click the wrong thing and error
-                // XPath below is an attempt to identify this and click the button, and exclude it from the next button test
-                string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
-                ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
-                if (overlayButtons.Count > 0) overlayButtons[0].Click();
-
-                try
-                {
-                    string nextButtonXPath = "//button[@data-test=\"player-next\" " +
-                        "and @aria-disabled=\"false\" " +
-                        "and not(following::div[@id='overlayButtons' and @onclick]//button/span)]";
-                    ReadOnlyCollection<IWebElement> nextButtons = driver.FindElements(By.XPath(nextButtonXPath));
-                    if (nextButtons.Count > 0)  nextButtons[0].Click(); 
-                }
-                catch (Exception e) { Program.Log($"Exception: {e}"); }
-
-                // TODO not sure if we still need this now the overlay stuff exists
-                ReadOnlyCollection<IWebElement> noThanksButtons = driver.FindElements(By.XPath(
-                        "//button[@data-test=\"practice-hub-ad-no-thanks-button\" or @data-test=\"plus-no-thanks\"]"));
-                if (noThanksButtons.Count > 0) noThanksButtons[0].Click();
+                ClickAnyOverlayButton();
+                ClickAnyNextButton();
+                ClickAnyNoThanksButton();
 
                 if (Program.IsOnHomePage()) challengesCompleted = true;
             }
@@ -62,28 +40,28 @@ namespace DuolingoBotCS
             string className = ConvertToClassName(attributeValue);
             Program.Log($"Running {className}");
             #region Test code to be removed
-            if (className != "AssistChallenge" 
-                && className != "CompleteReverseTranslationChallenge" 
+            if (className != "AssistChallenge"
+                && className != "CompleteReverseTranslationChallenge"
                 && className != "DefinitionChallenge"
-                && className != "DialogueChallenge" 
-                && className != "FormChallenge" 
+                && className != "DialogueChallenge"
+                && className != "FormChallenge"
                 && className != "GapFillChallenge"
-                && className != "MatchChallenge" 
-                && className != "NameChallenge" 
+                && className != "MatchChallenge"
+                && className != "NameChallenge"
                 && className != "PartialReverseTranslateChallenge"
-                && className != "ReadComprehensionChallenge" 
-                && className != "SelectChallenge" 
+                && className != "ReadComprehensionChallenge"
+                && className != "SelectChallenge"
                 && className != "TapClozeChallenge"
-                && className != "TapCompleteChallenge" 
-                && className != "TranslateChallenge" 
+                && className != "TapCompleteChallenge"
+                && className != "TranslateChallenge"
                 && className != "TypeClozeChallenge"
-                && className != "SpeakChallenge" 
-                && className != "ListenChallenge" 
-                && className != "ListenCompleteChallenge" 
-                && className != "ListenMatchChallenge" 
-                && className != "ListenIsolationChallenge" 
-                && className != "ListenComprehensionChallenge" 
-                && className != "ListenTapChallenge" 
+                && className != "SpeakChallenge"
+                && className != "ListenChallenge"
+                && className != "ListenCompleteChallenge"
+                && className != "ListenMatchChallenge"
+                && className != "ListenIsolationChallenge"
+                && className != "ListenComprehensionChallenge"
+                && className != "ListenTapChallenge"
                 && className != "SelectTranscriptionChallenge"
                 )
             {
@@ -104,6 +82,44 @@ namespace DuolingoBotCS
                     challenge.Run();
                 }
             }
+        }
+
+        private static void ClickAnyOverlayButton()
+        {
+            // Duo have overlaid some message buttons on a valid displayed (and not disabled) player-next button
+            // So a naive test for a next button may click the wrong thing and error
+            // XPath below is an attempt to identify this and click the button, and exclude it from the next button test
+            string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
+            ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
+            if (overlayButtons.Count > 0) overlayButtons[0].Click();
+        }
+
+        private static void ClickAnyNextButton()
+        {
+            try
+            {
+                string nextButtonXPath = "//button[@data-test=\"player-next\" " +
+                    "and @aria-disabled=\"false\" " +
+                    "and not(following::div[@id='overlayButtons' and @onclick]//button/span)]";
+                ReadOnlyCollection<IWebElement> nextButtons = driver.FindElements(By.XPath(nextButtonXPath));
+                if (nextButtons.Count > 0) nextButtons[0].Click();
+            }
+            catch (Exception e) { Program.Log($"Exception: {e}"); }
+        }
+
+        private static void ClickAnyNoThanksButton()
+        {
+            // TODO not sure if we still need this now the overlay stuff exists
+            ReadOnlyCollection<IWebElement> noThanksButtons = driver.FindElements(By.XPath(
+                    "//button[@data-test=\"practice-hub-ad-no-thanks-button\" or @data-test=\"plus-no-thanks\"]"));
+            if (noThanksButtons.Count > 0) noThanksButtons[0].Click();
+        }
+
+        private void RunChallenge()
+        {
+            ReadOnlyCollection<IWebElement> elements = driver.FindElements(By.XPath(
+                "//div [starts-with (@data-test, 'challenge challenge-')]"));
+            if (elements.Count > 0) RunChallenge(elements);
         }
 
         private static void WaitForNewScreenThenContinue()

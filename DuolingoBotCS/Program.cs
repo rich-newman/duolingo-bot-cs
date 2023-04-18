@@ -55,6 +55,20 @@ namespace DuolingoBotCS
             driver.Quit();
         }
 
+        private static ChromeOptions GetChromeOptions()
+        {
+            ChromeOptions options = new();
+            options.AddArgument("--log-level=3");
+            options.AddArgument("--disable-infobars");
+            options.AddArgument("--disable-extensions");
+            options.AddExcludedArgument("enable-automation");
+            if (incognito) options.AddArgument("--incognito");
+            if (muteAudio) options.AddArgument("--mute-audio");
+            if (maximizeWindow) options.AddArgument("start-maximized");
+            if (headless) options.AddArgument("--headless");
+            return options;
+        }
+
         private static void Login()
         {
             if (autoLogin && username != null && password != null)
@@ -107,60 +121,18 @@ namespace DuolingoBotCS
 
         private static void DoTree()
         {
-
             bool completed = false;
             while (!completed)
             {
                 try
                 {
-                    System.Diagnostics.Debugger.Break();
+                    Debugger.Break();
                     Log("Trying to start new lesson");
                     WaitForHomePage(secondsToWait: 20);
-
-                    string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
-                    ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
-                    if (overlayButtons.Count > 1 && overlayButtons[1].Text == BaseLanguage.NoThanks) overlayButtons[1].Click();
-
-                    ReadOnlyCollection<IWebElement> goToCurrentElements = driver.FindElements(By.XPath(
-                        "//button[@aria-label=\"Go to current unit\"]"));
-                    if (goToCurrentElements.Count > 0) goToCurrentElements[0].Click();
-
-                    string buttonXPath = $@"//div[@role=""button""]//button[@aria-label]
-                                            [following-sibling::*[.//div[text()='{BaseLanguage.Start}']]]";
-                    ReadOnlyCollection<IWebElement> startElements = driver.FindElements(By.XPath(buttonXPath));
-                    if (startElements.Count > 0)
-                    {
-                        string testType = startElements[0].GetAttribute("aria-label");
-                        ReadOnlyCollection<IWebElement> childImages = driver.FindElements(By.XPath(buttonXPath + "/img"));
-                        if (childImages.Count > 0)
-                            childImages[0].Click();
-                        Thread.Sleep(2000);
-                        ReadOnlyCollection<IWebElement> elements = driver.FindElements(By.XPath(
-                            "//a[starts-with (@data-test, 'skill-path-state-active')]"));
-                        if (elements.Count > 0)
-                        {
-                            elements[0].Click();
-                            if (testType.ToUpper() == BaseLanguage.Story)
-                                new Story().Run();
-                            else
-                                new Challenges().Run();
-                        }
-                    }
-
-                    string chestXPath = $"//button[{AttributeMatches("@aria-label", BaseLanguage.OpenChest)}]//img";
-                    ReadOnlyCollection<IWebElement> chestElements = driver.FindElements(By.XPath(chestXPath));
-                    if (chestElements.Count > 0)
-                    {
-                        chestElements[0].Click();
-                        try
-                        {
-                            new WebDriverWait(driver, TimeSpan.FromSeconds(30)).Until
-                                (e => e.FindElements(By.XPath(chestXPath)).Count == 0);
-                            Thread.Sleep(2000); // Still getting crashes because screen not ready
-                        }
-                        catch (WebDriverTimeoutException) { Log("Chest dismissal timed out"); }
-                    }
-
+                    ClickAnyOverlayButton();
+                    ClickAnyGoToCurrentUnitButton();
+                    RunNextItemInTree();
+                    ClickAnyChest();
                 }
                 catch (Exception e) { Log(e); }
             }
@@ -176,10 +148,59 @@ namespace DuolingoBotCS
             catch (WebDriverTimeoutException) { Log("Time out in main loop waiting for home page"); }
         }
 
-        internal static bool IsOnHomePage()
+        private static void ClickAnyOverlayButton()
         {
-            ReadOnlyCollection<IWebElement> homePageElements = driver.FindElements(By.XPath(homePageXpath));
-            return homePageElements.Count > 0;
+            string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
+            ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
+            if (overlayButtons.Count > 1 && overlayButtons[1].Text == BaseLanguage.NoThanks) overlayButtons[1].Click();
+        }
+
+        private static void ClickAnyGoToCurrentUnitButton()
+        {
+            ReadOnlyCollection<IWebElement> goToCurrentElements = driver.FindElements(By.XPath(
+                "//button[@aria-label=\"Go to current unit\"]"));
+            if (goToCurrentElements.Count > 0) goToCurrentElements[0].Click();
+        }
+
+        private static void RunNextItemInTree()
+        {
+            string buttonXPath = $@"//div[@role=""button""]//button[@aria-label]
+                                            [following-sibling::*[.//div[text()='{BaseLanguage.Start}']]]";
+            ReadOnlyCollection<IWebElement> startElements = driver.FindElements(By.XPath(buttonXPath));
+            if (startElements.Count > 0)
+            {
+                string testType = startElements[0].GetAttribute("aria-label");
+                ReadOnlyCollection<IWebElement> childImages = driver.FindElements(By.XPath(buttonXPath + "/img"));
+                if (childImages.Count > 0) childImages[0].Click();
+                Thread.Sleep(2000);
+                ReadOnlyCollection<IWebElement> elements = driver.FindElements(By.XPath(
+                    "//a[starts-with (@data-test, 'skill-path-state-active')]"));
+                if (elements.Count > 0)
+                {
+                    elements[0].Click();
+                    if (testType.ToUpper() == BaseLanguage.Story)
+                        new Story().Run();
+                    else
+                        new Challenges().Run();
+                }
+            }
+        }
+
+        private static void ClickAnyChest()
+        {
+            string chestXPath = $"//button[{AttributeMatches("@aria-label", BaseLanguage.OpenChest)}]//img";
+            ReadOnlyCollection<IWebElement> chestElements = driver.FindElements(By.XPath(chestXPath));
+            if (chestElements.Count > 0)
+            {
+                chestElements[0].Click();
+                try
+                {
+                    new WebDriverWait(driver, TimeSpan.FromSeconds(30)).Until
+                        (e => e.FindElements(By.XPath(chestXPath)).Count == 0);
+                    Thread.Sleep(2000); // Still getting crashes because screen not ready
+                }
+                catch (WebDriverTimeoutException) { Log("Chest dismissal timed out"); }
+            }
         }
 
         private static string AttributeMatches(string attributeName, string input)
@@ -188,18 +209,10 @@ namespace DuolingoBotCS
             return $"translate({attributeName}, '{input}', '{lowerCaseInput}')='{lowerCaseInput}'";
         }
 
-        private static ChromeOptions GetChromeOptions()
+        internal static bool IsOnHomePage()
         {
-            ChromeOptions options = new();
-            options.AddArgument("--log-level=3");
-            options.AddArgument("--disable-infobars");
-            options.AddArgument("--disable-extensions");
-            options.AddExcludedArgument("enable-automation");
-            if (incognito) options.AddArgument("--incognito");
-            if (muteAudio) options.AddArgument("--mute-audio");
-            if (maximizeWindow) options.AddArgument("start-maximized");
-            if (headless) options.AddArgument("--headless");
-            return options;
+            ReadOnlyCollection<IWebElement> homePageElements = driver.FindElements(By.XPath(homePageXpath));
+            return homePageElements.Count > 0;
         }
 
         [Conditional("DEBUG")]
