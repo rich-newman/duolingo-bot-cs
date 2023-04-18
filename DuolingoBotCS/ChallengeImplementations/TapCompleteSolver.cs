@@ -21,8 +21,8 @@
         internal TapCompleteSolver(string fullSolution, string originalQuestion, IEnumerable<string> choiceTexts)
         {
             this.choiceTexts = choiceTexts;
-            solutionWords = Challenge.RemovePunctuation(fullSolution).Split(' ');
-            questionWords = Challenge.RemovePunctuation(originalQuestion).Trim().Split(' ');
+            solutionWords = Challenge.RemovePunctuation(fullSolution).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            questionWords = Challenge.RemovePunctuation(originalQuestion).Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             finishedQuestionWords = questionWords.Length == 0;  // false unless there's nothing there
         }
 
@@ -77,7 +77,18 @@
                 }
                 else if (currentMismatches.Contains(' '))
                 {
-                    string[] splitWords = currentMismatches.Split(' ');
+                    string[] splitWords = currentMismatches.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                    foreach (string splitWord in splitWords)
+                    {
+                        if (choiceTexts.Contains(splitWord))
+                            results.Add(splitWord);
+                        else
+                            throw new Exception($"Unable to find solution string {currentMismatches} in choices");
+                    }
+                }
+                else if (currentMismatches.Contains('-'))
+                {
+                    string[] splitWords = currentMismatches.Split('-', StringSplitOptions.RemoveEmptyEntries);
                     foreach (string splitWord in splitWords)
                     {
                         if (choiceTexts.Contains(splitWord))
@@ -93,10 +104,7 @@
         private void IncrementQuestionWordsPosition(int increment = 1)
         {
             questionWordsPosition += increment;
-            if (questionWordsPosition == questionWords.Length)
-            {
-                finishedQuestionWords = true;
-            }
+            if (questionWordsPosition == questionWords.Length) finishedQuestionWords = true;
         }
 
         private bool ThisAndNextQuestionWordConcatenatedMatchSolutionWord(string questionWord, string solutionWord) =>
@@ -110,6 +118,7 @@
         private bool QuestionWordMatchesStartOrEndOfSolutionWord(string questionWord, string solutionWord) =>
             !finishedQuestionWords && (solutionWord.StartsWith(questionWord) || solutionWord.EndsWith(questionWord));
 
+        // TODO try... methods should really return a bool and an out parameter
         private void TryFindResultWithPartialWordMatch(string questionWord, string solutionWord)
         {
             // Get the part of the solutionWord that is not questionWord (it either starts or ends with questionWord)
@@ -117,21 +126,37 @@
             // solutionWord.Substring(0, solutionWord.Length - questionWord.Length)
             string restOfSolutionWord = solutionWord.StartsWith(questionWord) ?
                 solutionWord[questionWord.Length..] : solutionWord[..^questionWord.Length];
-            if (choiceTexts.Contains(restOfSolutionWord))
+            List<string> choices = FindChoicesForSolutionWord(restOfSolutionWord);
+            if (choices != null)
             {
-                // We have part of a word matching, and part not and that part is a choice
+                // We have part of a word matching, and part not and that part is a choice or choices
                 // Firstly we may already have identified a word preceding this that is a choice
-                // We assume in these edge cases we're not going to see two words on a choice with one a partial match
                 AddCurrentMismatchesToResults();
                 IncrementQuestionWordsPosition();
                 // Add the part of the word that doesn't match to our results
-                results.Add(restOfSolutionWord);
+                results.AddRange(choices);
             }
             else
             {
                 // There's no partial match after all, add the solution word to our current mismatches
                 AddMismatchedSolutionWordToCurrentMismatches(solutionWord);
             }
+        }
+
+        private List<string> FindChoicesForSolutionWord(string solutionWord)
+        {
+            if (choiceTexts.Contains(solutionWord)) return new List<string>() { solutionWord };
+            if(solutionWord.Contains('-'))
+            {
+                string[] splitSolutionWords = solutionWord.Split('-', StringSplitOptions.RemoveEmptyEntries);
+                bool allMatch = true;
+                foreach(string splitSolutionWord in splitSolutionWords)
+                {
+                    if (!choiceTexts.Contains(splitSolutionWord)) allMatch = false;
+                }
+                if (allMatch) return splitSolutionWords.ToList();
+            }
+            return null;
         }
 
         private void AddMismatchedSolutionWordToCurrentMismatches(string solutionWord) => currentMismatches += solutionWord + " ";

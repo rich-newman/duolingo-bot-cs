@@ -264,5 +264,99 @@ namespace DuolingoBotCS.Tests
             Assert.AreEqual(solutions.Count, 1);
             Assert.AreEqual(solutions[0], choiceTexts[0]);
         }
+
+        [TestMethod]
+        public void DashPartialMatchStartTest()
+        {
+            string fullSolution = "Oui, expliquons-la bien.";
+            string originalQuestion = "Oui expliquons bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 1);
+            Assert.AreEqual(solutions[0], choiceTexts[0]);
+        }
+
+        [TestMethod]
+        public void DashPartialMatchEndTest()
+        {
+            string fullSolution = "Oui, expliquons-la bien.";
+            string originalQuestion = "Oui la bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 1);
+            Assert.AreEqual(solutions[0], choiceTexts[2]);
+        }
+
+        [TestMethod]
+        public void DashExactMatchTest()
+        {
+            string fullSolution = "Oui, expliquons-la bien.";
+            string originalQuestion = "Oui expliquons la bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 0);
+        }
+
+        [TestMethod]
+        public void DashedNoMatchTest()
+        {
+            string fullSolution = "Oui, expliquons-la bien.";
+            string originalQuestion = "Oui bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 2);
+            Assert.AreEqual(solutions[0], choiceTexts[2]);
+            Assert.AreEqual(solutions[1], choiceTexts[0]);
+        }
+
+        // An actual Duo question
+        [TestMethod]
+        public void TwoDashesPartialMatchStartTest()
+        {
+            string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
+            string originalQuestion = "C' est une demande un peu spéciale expliquons bien ";
+            string[] choiceTexts = new string[] { "la", "leur" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 2);
+            Assert.AreEqual(solutions[0], choiceTexts[0]);
+            Assert.AreEqual(solutions[1], choiceTexts[1]);
+        }
+
+        [TestMethod]
+        public void TwoDashesPartialMatchEndTest()
+        {
+            string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
+            string originalQuestion = "C' est une demande un peu spéciale leur bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 2);
+            Assert.AreEqual(solutions[0], choiceTexts[2]);
+            Assert.AreEqual(solutions[1], choiceTexts[0]);
+        }
+
+        [TestMethod]
+        public void TwoDashesNoMatchTest()
+        {
+            string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
+            string originalQuestion = "C' est une demande un peu spéciale bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 3);
+            Assert.AreEqual(solutions[0], choiceTexts[2]);
+            Assert.AreEqual(solutions[1], choiceTexts[0]);
+            Assert.AreEqual(solutions[2], choiceTexts[1]);
+        }
+
+        // Code can't deal with this at present, not sure if it needs to
+        //[TestMethod]
+        //public void TwoDashesExactMatchTest()
+        //{
+        //    string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
+        //    string originalQuestion = "C' est une demande un peu spéciale expliquons la leur bien ";
+        //    string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+        //    List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+        //    Assert.AreEqual(solutions.Count, 0);
+        //}
+
     }
 }
