@@ -148,11 +148,15 @@ namespace DuolingoBotCS
             catch (WebDriverTimeoutException) { Log("Time out in main loop waiting for home page"); }
         }
 
-        private static void ClickAnyOverlayButton()
+        internal static void ClickAnyOverlayButton()
         {
+            // Duo have overlaid some message buttons on a valid displayed (and not disabled) player-next button
+            // So a naive test for a next button may click the wrong thing and error
+            // XPath below is an attempt to identify this and click the button, and exclude it from the next button test
+            // When there are multiple buttons on the overlay screen the next/no thanks/continue is usually the last one, now [^1]
             string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
             ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
-            if (overlayButtons.Count > 1 && overlayButtons[1].Text == BaseLanguage.NoThanks) overlayButtons[1].Click();
+            if (overlayButtons.Count > 0) overlayButtons[^1].Click();
         }
 
         private static void ClickAnyGoToCurrentUnitButton()

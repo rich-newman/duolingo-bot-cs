@@ -116,13 +116,13 @@ namespace DuolingoBotCS
 
         protected static string GetQuestionFromHintTokens()
         {
-            ReadOnlyCollection<IWebElement> words = driver.FindElements(By.XPath("//div[@data-test=\"hint-token\"]"));
+            ReadOnlyCollection<IWebElement> words = driver.FindElements(By.XPath("//div[@data-test='hint-token'] | //span[@data-test='hint-token']"));
             if (words.Count == 0) return null;
             string question = "";
             foreach (IWebElement word in words)
             {
                 string text = word.Text;
-                question += word.Text + " ";
+                question += (text == "" ? " " : text);
             }
             return question;
         }

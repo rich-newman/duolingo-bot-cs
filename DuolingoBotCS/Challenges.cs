@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace DuolingoBotCS
 {
@@ -25,7 +26,7 @@ namespace DuolingoBotCS
                 WaitForNewScreenThenContinue();
                 //Program.DebugDumpButtonState("Debug Dump: In Run after wait");
 
-                ClickAnyOverlayButton();
+                Program.ClickAnyOverlayButton();
                 ClickAnyNextButton();
                 ClickAnyNoThanksButton();
 
@@ -84,16 +85,6 @@ namespace DuolingoBotCS
             }
         }
 
-        private static void ClickAnyOverlayButton()
-        {
-            // Duo have overlaid some message buttons on a valid displayed (and not disabled) player-next button
-            // So a naive test for a next button may click the wrong thing and error
-            // XPath below is an attempt to identify this and click the button, and exclude it from the next button test
-            string overlayButtonsXPath = "//div[@id='overlays' and @onclick]//button[span]";
-            ReadOnlyCollection<IWebElement> overlayButtons = driver.FindElements(By.XPath(overlayButtonsXPath));
-            if (overlayButtons.Count > 0) overlayButtons[0].Click();
-        }
-
         private static void ClickAnyNextButton()
         {
             try
@@ -112,7 +103,11 @@ namespace DuolingoBotCS
             // TODO not sure if we still need this now the overlay stuff exists
             ReadOnlyCollection<IWebElement> noThanksButtons = driver.FindElements(By.XPath(
                     "//button[@data-test=\"practice-hub-ad-no-thanks-button\" or @data-test=\"plus-no-thanks\"]"));
-            if (noThanksButtons.Count > 0) noThanksButtons[0].Click();
+            if (noThanksButtons.Count > 0)
+            {
+                Debugger.Break();
+                noThanksButtons[0].Click();
+            }
         }
 
         private void RunChallenge()

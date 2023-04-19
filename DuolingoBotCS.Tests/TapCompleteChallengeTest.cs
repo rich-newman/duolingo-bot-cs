@@ -359,16 +359,15 @@ namespace DuolingoBotCS.Tests
             Assert.AreEqual(solutions[1], choiceTexts[0]);
         }
 
-        // Code can't deal with this at present, not sure if it needs to
-        //[TestMethod]
-        //public void TwoDashesExactMatchTest()
-        //{
-        //    string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
-        //    string originalQuestion = "C' est une demande un peu spéciale expliquons la leur bien ";
-        //    string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
-        //    List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
-        //    Assert.AreEqual(solutions.Count, 0);
-        //}
+        [TestMethod]
+        public void TwoDashesExactMatchTest()
+        {
+            string fullSolution = "C'est une demande un peu spéciale, expliquons-la-leur bien.";
+            string originalQuestion = "C' est une demande un peu spéciale expliquons-la-leur bien ";
+            string[] choiceTexts = new string[] { "la", "leur", "expliquons" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 0);
+        }
 
     }
 }
