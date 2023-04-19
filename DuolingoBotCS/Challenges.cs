@@ -20,13 +20,13 @@ namespace DuolingoBotCS
             bool challengesCompleted = false;
             while (!challengesCompleted)
             {
+                Program.ClickAnyOverlayButton();
                 RunChallenge();
 
                 //Program.DebugDumpButtonState("Debug Dump: In Run before wait");
                 WaitForNewScreenThenContinue();
                 //Program.DebugDumpButtonState("Debug Dump: In Run after wait");
 
-                Program.ClickAnyOverlayButton();
                 ClickAnyNextButton();
                 ClickAnyNoThanksButton();
 
@@ -54,8 +54,10 @@ namespace DuolingoBotCS
                 && className != "SelectChallenge"
                 && className != "TapClozeChallenge"
                 && className != "TapCompleteChallenge"
+                //&& className != "TapCompleteTableChallenge"
                 && className != "TranslateChallenge"
                 && className != "TypeClozeChallenge"
+                //&& className != "TypeCompleteTableChallenge"
                 && className != "SpeakChallenge"
                 && className != "ListenChallenge"
                 && className != "ListenCompleteChallenge"

@@ -15,7 +15,7 @@ namespace DuolingoBotCS
         // us on the next screen in all cases
         internal abstract void Run();
 
-        protected static bool SkipButtonExists()
+        protected virtual bool SkipButtonExists()
         {
             string enabledSkipButtonXPath = "//button[@data-test='player-skip']";
             ReadOnlyCollection<IWebElement> skipButtons = driver.FindElements(By.XPath(enabledSkipButtonXPath));
