@@ -171,7 +171,7 @@ namespace DuolingoBotCS
 
         internal static string RemovePunctuation(string text) =>
             text.Replace(".", "").Replace(",", "").Replace("!", "").Replace("«", "").Replace("»", "").Replace(":", "").Replace("\"", "")
-                .Replace("?", "").Replace("¡", "").Replace("¿", "").Replace(";", "").Trim();
+                .Replace("?", "").Replace("¡", "").Replace("¿", "").Replace(";", "").Replace("…", "").Trim();
 
 
         internal static string TextMatches(string input)

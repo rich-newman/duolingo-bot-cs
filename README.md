@@ -24,6 +24,7 @@ A bot that does the Duolingo tree
 
 - **This is a screenscraper, so it will probably break as soon as Duolingo change the format of any of their web pages.**
 - If you crash out then Duo may not let you log in again immediately.  If you log out manually using the Duo menus when broken on the breakpoint in DoTree, and then shut down the bot, then usually you can restart successfully.
+- If you break on an error in debug, just hit continue, maybe a few times: usually the program will recover and continue.
 - If you want to set up another base language this is some work: you need to set up BaseLanguage.cs for your language in the same way as French and Spanish.  The various settings are described in BaseLanguage.cs.
 - Settings.txt is just a standard text file set to 'Copy if newer' to the build folder on a build.  If you want to change a setting either change it in the build folder, or change some code (just add a blank line somewhere in a .cs file) and rebuild.  Otherwise it may not copy and your new settings may not be picked up.
 - As usual with Duolingo things work faster if you turn off Animations and Motivational Messages in More/Settings.  You can do this from the breakpoint in DoTree.

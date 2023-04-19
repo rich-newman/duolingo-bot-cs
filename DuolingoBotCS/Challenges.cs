@@ -129,7 +129,7 @@ namespace DuolingoBotCS
             // So we try that here.
             try
             {
-                new WebDriverWait(driver, TimeSpan.FromSeconds(7))
+                new WebDriverWait(driver, TimeSpan.FromSeconds(30))
                     .Until(e => !WaitForNewScreenIfNoTextOnNextButton());
                 new WebDriverWait(driver, TimeSpan.FromSeconds(2))
                     .Until(e => !WaitForNewScreen());

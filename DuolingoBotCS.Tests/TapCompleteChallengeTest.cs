@@ -347,6 +347,18 @@ namespace DuolingoBotCS.Tests
             Assert.AreEqual(solutions[2], choiceTexts[1]);
         }
 
+        [TestMethod]
+        public void TolerateLastWordMissingInQuestionTest()
+        {
+            string fullSolution = "Lui, il aurait annulé la commande et il serait parti en râlant.";
+            string originalQuestion = "Lui il annulé la commande et il parti en ";
+            string[] choiceTexts = new string[] { "serait", "aurait" };
+            List<string> solutions = new TapCompleteSolver(fullSolution, originalQuestion, choiceTexts).GetChoiceTextsToClick();
+            Assert.AreEqual(solutions.Count, 2);
+            Assert.AreEqual(solutions[0], choiceTexts[1]);
+            Assert.AreEqual(solutions[1], choiceTexts[0]);
+        }
+
         // Code can't deal with this at present, not sure if it needs to
         //[TestMethod]
         //public void TwoDashesExactMatchTest()

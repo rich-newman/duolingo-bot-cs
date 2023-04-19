@@ -79,8 +79,7 @@
                 {
                     bool done = TryAddMismatchesSplitByCharacter(' ');
                     if (!done) done = TryAddMismatchesSplitByCharacter('-') ;
-                    if (!done) done = TryAddMismatchesSplitByCharacter(' ', '-');
-                    if (!done) throw new Exception($"Unable to find solution string {currentMismatches} in choices");
+                    if (!done) TryAddMismatchesSplitByCharacter(' ', '-');
                 }
                 currentMismatches = "";
             }
