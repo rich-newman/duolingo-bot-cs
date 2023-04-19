@@ -100,14 +100,9 @@ namespace DuolingoBotCS
 
         private static void ClickAnyNoThanksButton()
         {
-            // TODO not sure if we still need this now the overlay stuff exists
             ReadOnlyCollection<IWebElement> noThanksButtons = driver.FindElements(By.XPath(
                     "//button[@data-test=\"practice-hub-ad-no-thanks-button\" or @data-test=\"plus-no-thanks\"]"));
-            if (noThanksButtons.Count > 0)
-            {
-                Debugger.Break();
-                noThanksButtons[0].Click();
-            }
+            if (noThanksButtons.Count > 0) noThanksButtons[0].Click();
         }
 
         private void RunChallenge()
