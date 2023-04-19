@@ -10,6 +10,7 @@ namespace DuolingoBotCS.ChallengeImplementations
             {
                 // Not sure how reliable this will be!  But it's too tempting not to try.
                 // Can also do this by finding the first sibling of the input referred to in EnterText, which may be better
+                // TODO This can have two entries to make in the table, and code below won't work
                 IWebElement solutionElement = driver.FindElement(
                     By.XPath("//div[@class=\"caPDQ\"]"));
                 string textToEnter = solutionElement.GetAttribute("innerHTML").Trim('_');

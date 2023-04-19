@@ -15,17 +15,18 @@ namespace DuolingoBotCS.ChallengeImplementations
         protected override void EnterSolution(string solution, ReadOnlyCollection<IWebElement> choices, string originalQuestion) =>
             ClickAllChoicesInReverse(choices);
 
-        // Horrible cheat for now as I didn't get to see what a solution looks like
-        // This should work though, because there are only two choices and
-        // we tried it forwards already and failed
+        // Cheat, but this should work if there are only two choices
+        // We tried it forwards already and failed, try in reverse
         private static void ClickAllChoicesInReverse(IEnumerable<IWebElement> choices)
         {
-            Debugger.Break();
             foreach (IWebElement choice in choices.Reverse())
                 choice.Click();
         }
 
         // For the cheat, force the test to guess the first time through, whether we can skip or not
         protected override bool SkipButtonExists() => false;
+        // We don't use the solution, so no point in getting it, we just need a dictionary entry to
+        // let us know we guessed once
+        protected override string GetSolutionText() => string.Empty;
     }
 }
