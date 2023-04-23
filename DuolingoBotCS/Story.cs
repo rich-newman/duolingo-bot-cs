@@ -66,7 +66,11 @@ namespace DuolingoBotCS
                 $"span[{Challenge.TextMatches(BaseLanguage.SkipExercise)}] " +
                 "and not(@disabled)]";
             ReadOnlyCollection<IWebElement> skipExerciseButtons = driver.FindElements(By.XPath(enabledNextButtonXPath));
-            if (skipExerciseButtons.Count > 0) skipExerciseButtons[0].Click();
+            if (skipExerciseButtons.Count > 0)
+            {
+                skipExerciseButtons[0].Click();
+                Thread.Sleep(TimeSpan.FromSeconds(15));
+            }
         }
 
         private static void TryStoriesChoiceChallenge()
