@@ -42,7 +42,7 @@ namespace DuolingoBotCS
             Program.Log($"Running {className}");
             #region Test code to be removed
             if (className != "AssistChallenge"
-                //&& className != "CompleteReverseTranslationChallenge"
+                && className != "CompleteReverseTranslationChallenge"
                 && className != "DefinitionChallenge"
                 && className != "DialogueChallenge"
                 && className != "FormChallenge"
@@ -54,7 +54,7 @@ namespace DuolingoBotCS
                 && className != "SelectChallenge"
                 && className != "TapClozeChallenge"
                 && className != "TapCompleteChallenge"
-                //&& className != "TapCompleteTableChallenge"
+                && className != "TapCompleteTableChallenge"
                 && className != "TranslateChallenge"
                 && className != "TypeClozeChallenge"
                 && className != "TypeCompleteTableChallenge"
