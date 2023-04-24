@@ -42,6 +42,9 @@ namespace DuolingoBotCS
             Program.Log($"Running {className}");
             #region Test code to be removed
             if (className != "AssistChallenge"
+                && className != "CharacterIntroChallenge"
+                && className != "CharacterMatchChallenge"
+                && className != "CharacterSelectChallenge"
                 && className != "CompleteReverseTranslationChallenge"
                 && className != "DefinitionChallenge"
                 && className != "DialogueChallenge"
